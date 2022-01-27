@@ -14,8 +14,6 @@ interface Session {
     fun reject()
     fun update(accounts: List<String>, chainId: Long)
     fun kill()
-    fun createConnection(host: String, cb: Callback, appName: String, sessionStoreDir: String): String
-    fun initEasy(dir: String)
 
     fun peerMeta(): PeerMeta?
     fun approvedAccounts(): List<String>?

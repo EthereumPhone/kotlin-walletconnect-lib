@@ -46,13 +46,6 @@ class WCSession(
     private val requests: MutableMap<Long, (Session.MethodCall.Response) -> Unit> = ConcurrentHashMap()
     private val sessionCallbacks: MutableSet<Session.Callback> = Collections.newSetFromMap(ConcurrentHashMap<Session.Callback, Boolean>())
 
-    // For easy setup
-    lateinit var client : OkHttpClient
-    lateinit var moshi : Moshi
-    lateinit var storage : FileWCSessionStore
-    lateinit var sessionConfig: Session.Config
-    lateinit var session: Session
-
     init {
         currentKey = config.key
         clientData = sessionStore.load(config.handshakeTopic)?.let {
@@ -299,29 +292,7 @@ class WCSession(
         endSession()
     }
 
-    override fun createConnection(host: String, cb: Session.Callback, appName: String, sessionStoreDir: String): String {
-        initEasy(sessionStoreDir)
-        val key = ByteArray(32).also { Random().nextBytes(it) }.toNoPrefixHexString()
-        sessionConfig = Session.Config(UUID.randomUUID().toString(), host, key)
-        session = WCSession(sessionConfig.toFullyQualifiedConfig(),
-            MoshiPayloadAdapter(moshi),
-            storage,
-            OkHttpTransport.Builder(client, moshi),
-            Session.PeerMeta(name = appName)
-        )
-        session.addCallback(cb)
-        session.offer()
-        return sessionConfig.toWCUri()
-    }
 
-    override fun initEasy(dir: String) {
-        client = OkHttpClient.Builder()
-            .build()
-        moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-        storage = FileWCSessionStore(File(dir, "wc_session_store.json").apply { createNewFile() }, moshi)
-    }
 }
 
 interface WCSessionStore {
