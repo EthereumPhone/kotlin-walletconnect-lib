@@ -15,9 +15,12 @@ class SimpleImpl {
     lateinit var storage : FileWCSessionStore
     lateinit var sessionConfig: Session.Config
     lateinit var session: Session
+    var initialized : Boolean = false
 
-    fun createConnection(host: String, cb: Session.Callback, appName: String, sessionStoreDir: String): String {
-        initEasy(sessionStoreDir)
+    fun createConnection(host: String, cb: Session.Callback, appName: String, sessionStoreDir: File): String {
+        if (!initialized) {
+            initEasy(sessionStoreDir)
+        }
         val key = ByteArray(32).also { Random().nextBytes(it) }.toNoPrefixHexString()
         sessionConfig = Session.Config(UUID.randomUUID().toString(), host, key)
         session = WCSession(sessionConfig.toFullyQualifiedConfig(),
@@ -31,12 +34,13 @@ class SimpleImpl {
         return sessionConfig.toWCUri()
     }
 
-    fun initEasy(dir: String) {
+    fun initEasy(dir: File) {
         client = OkHttpClient.Builder()
             .build()
         moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
         storage = FileWCSessionStore(File(dir, "wc_session_store.json").apply { createNewFile() }, moshi)
+        initialized = true
     }
 }
