@@ -16,6 +16,6 @@ Add the dependency:
 
 ```gradle
 dependencies {
-	implementation 'com.github.WalletConnect:kotlin-walletconnect-lib:0.9.6'
+	implementation 'com.github.EthereumPhone:kotlin-walletconnect-lib:0.9.9'
 }
 ```
