@@ -40,7 +40,7 @@ class SimpleImpl {
         moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
-        storage = FileWCSessionStore(File(dir, "wc_session_store.json").apply { createNewFile() }, moshi)
+        storage = FileWCSessionStore(File(dir, "session_store.json").apply { createNewFile() }, moshi)
         initialized = true
     }
 }
